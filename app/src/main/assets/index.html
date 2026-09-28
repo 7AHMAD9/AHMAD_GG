@@ -1,0 +1,293 @@
+<title>Pronostici Goal/Goal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{
+  --bg:#EEF1EC; --surface:#FFFFFF; --surface2:#F5F7F3; --ink:#15201A; --muted:#5B6860; --line:#D5DDD6;
+  --pitch:#1B7A4B; --pitch-soft:#DDEFE4; --gold:#9A6E0C; --gold-soft:#FBF0D3; --red:#B8432F; --red-soft:#F8E1DB;
+  --heat:27,122,75;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root{
+  color-scheme:dark;--bg:#0F1512;--surface:#18211C;--surface2:#1E2922;--ink:#E7EEE9;--muted:#98A69D;--line:#2D3A32;
+  --pitch:#4CC585;--pitch-soft:#1D3528;--gold:#E6B84A;--gold-soft:#3A3019;--red:#EE7D66;--red-soft:#3D231E;--heat:76,197,133;}}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;padding-inline:16px;padding-block:20px 40px;margin:0}
+.wrap{max-width:1040px;margin:0 auto;display:grid;gap:18px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;border-bottom:3px solid var(--ink);padding-bottom:12px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(30px,7vw,46px);line-height:.95;margin:0;text-transform:uppercase}
+h1 span{color:var(--pitch)}
+.sub{color:var(--muted);margin:4px 0 0;max-width:62ch}
+.sync{display:grid;gap:6px;justify-items:start;text-align:left}
+.stamp{font-size:13px;color:var(--muted)}
+.stamp b{color:var(--ink);font-weight:600}
+.label{font-family:var(--display);font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:14px;color:var(--muted)}
+.btn{font-family:var(--display);font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:15px;border-radius:7px;padding:8px 14px;cursor:pointer;border:1px solid var(--ink);background:var(--ink);color:var(--bg)}
+.btn[disabled]{opacity:.5;cursor:default}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tab{font:inherit;font-weight:600;font-size:14px;padding:6px 12px;border-radius:99px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.tab[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tools{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;align-items:center}
+.sort{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:14px;color:var(--muted)}
+.picks{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.pick{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px;display:grid;gap:2px}
+.pick .p{font-family:var(--display);font-weight:800;font-size:34px;line-height:1;color:var(--pitch)}
+.pick .p.ov{color:var(--ink)}
+.pick .t{font-weight:600;line-height:1.25}
+.pick .m{font-size:12px;color:var(--muted)}
+.picks-wrap{display:grid;gap:14px}
+.table{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.row{display:grid;grid-template-columns:92px 1fr 70px 70px 76px 64px;gap:10px;align-items:center;padding:10px 14px;border-top:1px solid var(--line);width:100%;background:none;border-left:0;border-right:0;border-bottom:0;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.row:first-child{border-top:0}
+.row:hover{background:var(--surface2)}
+.row.head{cursor:default;background:var(--surface2);font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.row .when{font-size:12px;color:var(--muted);line-height:1.3}
+.row .teams{font-weight:600;line-height:1.25;overflow-wrap:anywhere}
+.row .lg{font-size:12px;color:var(--muted);font-weight:400}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.chip{font-family:var(--mono);font-weight:700;font-size:13px;padding:3px 8px;border-radius:99px;white-space:nowrap;justify-self:start}
+.chip.gg{background:var(--pitch-soft);color:var(--pitch)}
+.chip.ng{background:var(--red-soft);color:var(--red)}
+.chip.mid{background:var(--surface2);color:var(--muted);border:1px solid var(--line)}
+@media (max-width:640px){
+  .row{grid-template-columns:1fr auto;grid-template-areas:"teams chip" "when ov"}
+  .row .when{grid-area:when}.row .teams{grid-area:teams}.row .chip{grid-area:chip;justify-self:end}.row .ov{grid-area:ov;justify-self:end}.row .xg,.row .fair{display:none}
+  .row.head{display:none}
+}
+.detail{padding:14px;border-top:1px dashed var(--line);background:var(--surface2);display:grid;gap:14px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+@media (max-width:560px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--surface);padding:9px 11px}
+.stat .v{font-family:var(--mono);font-weight:700;font-size:18px}
+.stat .k{font-size:12px;color:var(--muted)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:700px){.two{grid-template-columns:1fr}}
+.bars{display:grid;gap:7px}
+.bar{display:grid;grid-template-columns:minmax(90px,150px) 1fr 46px;gap:8px;align-items:center;font-size:14px}
+.bar .track{height:9px;background:var(--surface);border-radius:99px;overflow:hidden;border:1px solid var(--line)}
+.bar .fill{height:100%;background:var(--pitch)}
+.odds{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
+.field{display:grid;gap:3px}
+.field label{font-size:13px;color:var(--muted)}
+input{font:inherit;font-family:var(--mono);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 9px;width:110px}
+.value{padding:9px 12px;border-radius:8px;font-weight:500}
+.value.yes{background:var(--gold-soft);color:var(--gold)}
+.value.no{background:var(--surface);color:var(--muted);border:1px solid var(--line)}
+.notice{padding:14px;border-radius:10px;background:var(--surface);border:1px solid var(--line)}
+.notice.err{border-color:var(--red);color:var(--red)}
+.msg{font-size:13px;color:var(--muted);max-width:40ch}
+.msg.err{color:var(--red)}
+footer{font-size:12px;color:var(--muted);max-width:85ch}
+footer p{margin:0 0 6px}
+footer a{color:inherit}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Goal<span>/</span>Goal</h1>
+      <p class="sub">Prossime partite di Serie A, Serie B, Serie C (3 gironi) e dei 4 grandi campionati esteri, con la probabilità che segnino entrambe le squadre (G/G) e che ci siano almeno 2 gol (Over 1,5), calcolata sulle statistiche casa/trasferta aggiornate ogni giorno.</p>
+    </div>
+    <div class="sync">
+      <div class="stamp" id="stamp">Caricamento dati…</div>
+      <button class="btn" id="refresh" type="button">Aggiorna dati</button>
+    </div>
+  </header>
+
+  <div id="state" class="notice" hidden></div>
+
+  <section id="topSec" class="picks-wrap" hidden>
+    <div><div class="label" style="margin-bottom:8px">Migliori G/G della giornata</div>
+    <div class="picks" id="picks"></div></div>
+    <div><div class="label" style="margin-bottom:8px">Migliori Over 1,5 della giornata</div>
+    <div class="picks" id="picksOv"></div></div>
+  </section>
+
+  <div class="tools" id="toolsBar" hidden>
+    <div class="tabs" id="tabs" role="group" aria-label="Campionato"></div>
+    <div class="sort">
+      <button class="tab" type="button" id="todayBtn" aria-pressed="false">Solo oggi</button>
+      <span>Ordina:</span>
+      <button class="tab" type="button" id="sortP" aria-pressed="true">% G/G</button>
+      <button class="tab" type="button" id="sortO" aria-pressed="false">% Over 1,5</button>
+      <button class="tab" type="button" id="sortD" aria-pressed="false">Data</button>
+    </div>
+  </div>
+
+  <div class="table" id="table" hidden></div>
+
+  <footer>
+    <p>Metodo: per ogni squadra si usano gol fatti e subiti in casa (per chi gioca in casa) e in trasferta (per l'ospite), rapportati alla media del campionato. Con poche partite giocate le medie vengono avvicinate a quella del campionato, per non esagerare i risultati di 2-3 gare. Gol attesi → modello di Poisson → P(G/G) = P(casa segna) × P(ospite segna).</p>
+    <p>Fonti: tabelle casa/trasferta da soccerstats.com, calendario da SportRadar e fonti sportive italiane. Dati aggiornati una volta al giorno.</p>
+    <p>È una stima statistica, non una garanzia. Il gioco è vietato ai minori e può causare dipendenza: gioca responsabilmente.</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const PRIOR=5; // partite "virtuali" alla media di lega
+const DATA_BASE='https://raw.githubusercontent.com/7AHMAD9/AHMAD_GG/main/data/';
+const LEAGUE_IDS=['seriea','serieb','seriec_a','seriec_b','seriec_c','premier','laliga','bundesliga','ligue1'];
+let leagues={}, filter='all', sortBy='p', open=null, onlyToday=null;
+
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pct=p=>Math.round(p*100)+'%';
+const f2=n=>n.toFixed(2).replace('.',',');
+const pois=(k,l)=>{let f=1;for(let i=2;i<=k;i++)f*=i;return Math.exp(-l)*Math.pow(l,k)/f};
+const num=v=>{const n=parseFloat(String(v??'').replace(',','.'));return isFinite(n)?n:null};
+const tone=p=>p>=0.58?'gg':p<=0.45?'ng':'mid';
+const dateFmt=new Intl.DateTimeFormat('it-IT',{weekday:'short',day:'numeric',month:'short'});
+const timeFmt=new Intl.DateTimeFormat('it-IT',{hour:'2-digit',minute:'2-digit'});
+const stampFmt=new Intl.DateTimeFormat('it-IT',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'});
+
+function model(lg,fx){
+  const T={};lg.teams.forEach(t=>T[t.n]=t);
+  const h=T[fx.h],a=T[fx.a]; if(!h||!a)return null;
+  let hp=0,hf=0,ap=0,af=0;lg.teams.forEach(t=>{hp+=t.hp;hf+=t.hf;ap+=t.ap;af+=t.af});
+  const Lh=hf/hp, La=af/ap;
+  const sh=(g,p,avg)=>(g+PRIOR*avg)/(p+PRIOR);
+  const hAtt=sh(h.hf,h.hp,Lh)/Lh, aDef=sh(a.aa,a.ap,Lh)/Lh;
+  const aAtt=sh(a.af,a.ap,La)/La, hDef=sh(h.ha,h.hp,La)/La;
+  const xH=Lh*hAtt*aDef, xA=La*aAtt*hDef;
+  const pH=1-Math.exp(-xH), pA=1-Math.exp(-xA), p=pH*pA;
+  const grid=[];let over=0;
+  for(let i=0;i<=6;i++){grid[i]=[];for(let j=0;j<=6;j++){const q=pois(i,xH)*pois(j,xA);grid[i][j]=q;if(i+j>=3)over+=q}}
+  const o15=1-Math.exp(-(xH+xA))*(1+xH+xA);
+  return {xH,xA,pH,pA,p,grid,over,o15,h,a,Lh,La};
+}
+
+function allRows(){
+  const now=Date.now()-2*3600e3, out=[];
+  Object.entries(leagues).forEach(([id,lg])=>{
+    (lg.fixtures||[]).forEach(fx=>{
+      if(Date.parse(fx.d)<now)return;
+      const r=model(lg,fx); if(r)out.push({id:id+'|'+fx.d+'|'+fx.h,lgId:id,lg,fx,r});
+    });
+  });
+  return out;
+}
+
+function oddsGet(k){try{return JSON.parse(localStorage.getItem('gg-odds|'+k))||{}}catch(e){return{}}}
+function oddsSet(k,v){try{localStorage.setItem('gg-odds|'+k,JSON.stringify(v))}catch(e){}}
+
+function render(){
+  const ids=Object.keys(leagues).sort((a,b)=>(leagues[a].order??9)-(leagues[b].order??9));
+  if(!ids.length){showState('I dati non sono ancora disponibili. Controlla la connessione e premi "Aggiorna dati".');return}
+  $('state').hidden=true;$('toolsBar').hidden=false;$('table').hidden=false;$('topSec').hidden=false;
+  const latest=ids.map(i=>Date.parse(leagues[i].updatedAt)).filter(x=>x).sort((a,b)=>b-a)[0];
+  const age=latest?(Date.now()-latest)/3600e3:null;
+  $('stamp').innerHTML=latest?('Dati aggiornati: <b>'+stampFmt.format(latest)+'</b>'+(age>36?' · <span style="color:var(--red)">non aggiornati da più di un giorno</span>':'')):'';
+  const tabs=$('tabs');tabs.innerHTML='';
+  [['all','Tutti']].concat(ids.map(i=>[i,leagues[i].name])).forEach(([k,l])=>{
+    const b=document.createElement('button');b.type='button';b.className='tab';b.textContent=l;b.setAttribute('aria-pressed',filter===k);
+    b.onclick=()=>{filter=k;render()};tabs.appendChild(b);
+  });
+  let rows=allRows();
+  const todayKey=new Date().toDateString();
+  const hasToday=rows.some(x=>new Date(x.fx.d).toDateString()===todayKey);
+  if(onlyToday===null)onlyToday=hasToday;
+  $('todayBtn').hidden=!hasToday;
+  $('todayBtn').setAttribute('aria-pressed',!!(onlyToday&&hasToday));
+  $('todayBtn').textContent='Solo oggi ('+rows.filter(x=>new Date(x.fx.d).toDateString()===todayKey).length+')';
+  if(onlyToday&&hasToday)rows=rows.filter(x=>new Date(x.fx.d).toDateString()===todayKey);
+  document.querySelectorAll('.picks-wrap .label').forEach((l,i)=>l.textContent=(i?'Migliori Over 1,5':'Migliori G/G')+(onlyToday&&hasToday?' di oggi':' in programma'));
+  const top=rows.slice().sort((a,b)=>b.r.p-a.r.p).slice(0,4);
+  const pickHtml=(list,key,cls)=>list.map(x=>`<div class="pick"><div class="p ${cls}">${pct(x.r[key])}</div><div class="t">${esc(x.fx.h)} – ${esc(x.fx.a)}</div><div class="m">${esc(x.lg.name)} · ${dateFmt.format(new Date(x.fx.d))} · quota equa ${f2(1/x.r[key])}</div></div>`).join('')||'<p class="msg">Nessuna partita in programma.</p>';
+  $('picks').innerHTML=pickHtml(top,'p','');
+  $('picksOv').innerHTML=pickHtml(rows.slice().sort((a,b)=>b.r.o15-a.r.o15).slice(0,4),'o15','ov');
+  if(filter!=='all')rows=rows.filter(x=>x.lgId===filter);
+  rows.sort(sortBy==='p'?(a,b)=>b.r.p-a.r.p:sortBy==='o'?(a,b)=>b.r.o15-a.r.o15:(a,b)=>Date.parse(a.fx.d)-Date.parse(b.fx.d));
+  const t=$('table');
+  t.innerHTML='<div class="row head"><span>Data</span><span>Partita</span><span>G/G</span><span>Over 1,5</span><span>Gol attesi</span><span>Quota equa G/G</span></div>';
+  if(!rows.length){t.insertAdjacentHTML('beforeend','<div class="row" style="cursor:default"><span></span><span class="msg">Nessuna partita in programma per questo campionato.</span></div>')}
+  rows.forEach(x=>{
+    const d=new Date(x.fx.d),tn=tone(x.r.p);
+    const b=document.createElement('button');b.type='button';b.className='row';b.setAttribute('aria-expanded',open===x.id);
+    b.innerHTML=`<span class="when">${dateFmt.format(d)}<br>${timeFmt.format(d)}</span>
+      <span class="teams">${esc(x.fx.h)} – ${esc(x.fx.a)}${filter==='all'?`<br><span class="lg">${esc(x.lg.name)}</span>`:''}</span>
+      <span class="chip ${tn}">${tn==='gg'?'GG ':tn==='ng'?'NG ':''}${pct(x.r.p)}</span>
+      <span class="chip ov ${x.r.o15>=0.75?'gg':x.r.o15<=0.6?'ng':'mid'}">O1,5 ${pct(x.r.o15)}</span>
+      <span class="num xg">${f2(x.r.xH)}–${f2(x.r.xA)}</span>
+      <span class="num fair">${f2(1/x.r.p)}</span>`;
+    b.onclick=()=>{open=open===x.id?null:x.id;render()};
+    t.appendChild(b);
+    if(open===x.id)t.appendChild(detail(x));
+  });
+  $('sortP').setAttribute('aria-pressed',sortBy==='p');$('sortO').setAttribute('aria-pressed',sortBy==='o');$('sortD').setAttribute('aria-pressed',sortBy==='d');
+}
+
+function bar(l,p){return `<div class="bar"><span style="overflow-wrap:anywhere">${esc(l)}</span><div class="track"><div class="fill" style="width:${Math.round(p*100)}%"></div></div><span class="num">${pct(p)}</span></div>`}
+
+function detail(x){
+  const r=x.r,el=document.createElement('div');el.className='detail';
+  const sc=[];for(let i=0;i<=6;i++)for(let j=0;j<=6;j++)sc.push([i+'-'+j,r.grid[i][j]]);
+  sc.sort((a,b)=>b[1]-a[1]);
+  const o=oddsGet(x.id);
+  el.innerHTML=`
+   <div class="stats">
+    <div class="stat"><div class="v">${pct(r.pH)}</div><div class="k">${esc(x.fx.h)} segna</div></div>
+    <div class="stat"><div class="v">${pct(r.pA)}</div><div class="k">${esc(x.fx.a)} segna</div></div>
+    <div class="stat"><div class="v">${f2(1/(1-r.p))}</div><div class="k">Quota equa No Goal</div></div>
+    <div class="stat"><div class="v">${pct(r.o15)}</div><div class="k">Over 1,5 · equa ${f2(1/r.o15)}</div></div>
+    <div class="stat"><div class="v">${pct(1-r.o15)}</div><div class="k">Under 1,5 · equa ${f2(1/(1-r.o15))}</div></div>
+    <div class="stat"><div class="v">${pct(r.over)}</div><div class="k">Over 2,5 · equa ${f2(1/r.over)}</div></div>
+   </div>
+   <div class="two">
+    <div class="bars"><div class="label">Statistiche usate</div>
+      <div class="msg" style="max-width:none">${esc(x.fx.h)} in casa: ${r.h.hf} fatti, ${r.h.ha} subiti in ${r.h.hp} partite.<br>${esc(x.fx.a)} in trasferta: ${r.a.af} fatti, ${r.a.aa} subiti in ${r.a.ap} partite.<br>Media ${esc(x.lg.name)}: ${f2(r.Lh)} gol casa, ${f2(r.La)} trasferta.</div>
+    </div>
+    <div class="bars"><div class="label">Risultati più probabili</div>${sc.slice(0,5).map(s=>bar(s[0],s[1]/sc[0][1]).replace(/<span class="num">\d+%<\/span>/,`<span class="num">${(s[1]*100).toFixed(1).replace('.',',')}%</span>`)).join('')}</div>
+   </div>
+   <div class="odds">
+    <div class="field"><label for="og">Quota Goal</label><input id="og" inputmode="decimal" value="${o.gg??''}" placeholder="es. 1,75"></div>
+    <div class="field"><label for="on">Quota No Goal</label><input id="on" inputmode="decimal" value="${o.ng??''}" placeholder="es. 2,05"></div>
+    <div class="field"><label for="oo">Quota Over 1,5</label><input id="oo" inputmode="decimal" value="${o.o15??''}" placeholder="es. 1,30"></div>
+   </div>
+   <div id="val"></div>`;
+  const upd=()=>{
+    const q=s=>el.querySelector(s).value;
+    const g=num(q('#og')),n=num(q('#on')),ov=num(q('#oo'));
+    oddsSet(x.id,{gg:q('#og'),ng:q('#on'),o15:q('#oo')});
+    const v=el.querySelector('#val');const c=[];
+    if(g&&g>1)c.push({s:'Goal',p:r.p,o:g});if(n&&n>1)c.push({s:'No Goal',p:1-r.p,o:n});if(ov&&ov>1)c.push({s:'Over 1,5',p:r.o15,o:ov});
+    if(!c.length){v.innerHTML='<div class="msg" style="max-width:none">Inserisci le quote del tuo bookmaker per vedere se conviene.</div>';return}
+    c.forEach(k=>k.e=k.p*k.o-1);
+    v.innerHTML=c.map(k=>k.e>0.03?`<div class="value yes">Valore su <b>${k.s}</b> a ${f2(k.o)}: quota equa ${f2(1/k.p)}, rendimento atteso +${(k.e*100).toFixed(1).replace('.',',')}%.</div>`
+      :`<div class="value no">${k.s} a ${f2(k.o)}: nessun valore (quota equa ${f2(1/k.p)}).</div>`).join('');
+  };
+  el.addEventListener('input',upd);setTimeout(upd);
+  return el;
+}
+
+function showState(t,err){const s=$('state');s.hidden=false;s.className='notice'+(err?' err':'');s.textContent=t}
+
+$('sortP').onclick=()=>{sortBy='p';render()};
+$('sortD').onclick=()=>{sortBy='d';render()};
+$('sortO').onclick=()=>{sortBy='o';render()};
+$('todayBtn').onclick=()=>{onlyToday=!onlyToday;render()};
+
+async function loadData(){
+  $('refresh').disabled=true;
+  const results=await Promise.allSettled(LEAGUE_IDS.map(async id=>{
+    const res=await fetch(DATA_BASE+id+'.json?t='+Date.now(),{cache:'no-store'});
+    if(!res.ok)throw new Error(id);
+    const v=await res.json();
+    return [id,v];
+  }));
+  const next={};let ok=0;
+  results.forEach(r=>{if(r.status==='fulfilled'){next[r.value[0]]=r.value[1];ok++}});
+  if(ok>0)leagues=next;
+  $('refresh').disabled=false;
+  if(!ok&&!Object.keys(leagues).length){showState('Non riesco a scaricare i dati. Controlla la connessione internet del telefono e riprova.',true);return}
+  render();
+}
+$('refresh').onclick=loadData;
+loadData();
+setInterval(loadData,30*60*1000); // ricontrolla ogni 30 minuti se l'app resta aperta
+})();
+</script>
